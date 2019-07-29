@@ -1,2 +1,2 @@
-# WSNSimulations.jl
-Simulation of wireless sensor networks
+# WSNs.jl
+Tools for simulating wireless sensor networks (WSNs).
