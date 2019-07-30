@@ -2,10 +2,10 @@ abstract type AbstractOcclusion end
 
 struct Wall <: AbstractOcclusion
     shape::Shape
-    np_decrease::Real
+    np_increase::Real
 
     function Wall(w::Real, h::Real, x::Real, y::Real)
-        new(rect(w,h,x,y), -2)
+        new(rect(w,h,x,y), 2)
     end
 end
 
@@ -26,9 +26,9 @@ struct Room
     end
 
     function Room()
-        walls = [Wall(5, 0.2, -0.5, 2.4), Wall(5, 0.2, 5.5, 4.9), Wall(5, 0.2, -0.5, 7.4)]
+        walls = [Wall(6, 0.2, -0.5, 2.4), Wall(6, 0.2, 7.5, 5.2), Wall(6, 0.2, -0.5, 9.7)]
 
-        new(12, 12, walls)
+        new(16, 16, walls)
     end
 end
 

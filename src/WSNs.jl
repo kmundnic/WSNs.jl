@@ -57,7 +57,7 @@ module WSNs
 
         Generate a random network of sensors.
         """
-        function RandomNetwork(;σ::Float64=0.25, interval::StepRange{Int64,Int64}=1:3:10)
+        function RandomNetwork(;σ::T=0.25, interval=1:3:10) where T <: Real
             layout = reshape([[x + σ*randn(), y + σ*randn()] for x = interval, y = interval], length(collect(interval))^2)
             layout = [[item[1] for item in layout] [item[2] for item in layout]]
             distances = pairwise(Euclidean(), layout, dims=1)
@@ -71,33 +71,7 @@ module WSNs
 
     include("geometry.jl")
     include("room.jl")
-
-    """
-    fading_model(d::T; np::Float64=4.0) where T <: Real
-
-    Obtain an RSSI value (in dBm) from a distance in meters.
-
-    This function can be used to create discontinuities 
-    in the fading model by passing different values for np.
-    """
-    function fading_model(d::T; np::S=4.0) where {T <: Real, S <:Real}
-        @assert d > 0 "fading_model: Distance should be > 0"
-        @assert np > 0 && np ≤ 10 "fading_model: Parameter np should be in the interval (0,10]"
-
-        P₀ = 170 # RSSI
-        d₀ = 3   # meters
-        P = P₀ - 10np*log10(d/d₀)
-
-        return P > 193 ? 193 : P < 136 ? 0 : P # return P in [136,193], otherwise saturate
-    end
-
-    function fading_model(d::Vector{T}, np::Vector{S}) where {T <: Real, S <: Real}
-        @assert all(d -> d > 0,  d) "fading_model: Distance should be > 0"
-        @assert all(np -> np > 0 && np ≤ 10, np) "fading_model: Parameter np should be in the interval (0,10]"
-        @assert length(d) == length(np) "fading_model: d and np must have the same length"
-
-        return [fading_model(d[i]; np=np[i]) for (i,_) in enumerate(d)]
-    end
+    include("fading.jl")
 
     function plot_layout(network::AbstractNetwork, room::Room; annotate::Bool=false)
 
