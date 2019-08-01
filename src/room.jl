@@ -50,7 +50,7 @@ function non_line_of_sight(network::AbstractNetwork, room::Room)
     number_of_occlusions = length(room.occlusions)
     number_of_sensors = size(network.layout,1)
 
-    D = Array{Union{Missings.Missing, Float64}, number_of_occlusions}(undef, number_of_sensors, number_of_sensors, number_of_occlusions)
+    NLOS = Array{Union{Missings.Missing, Float64}, number_of_occlusions}(undef, number_of_sensors, number_of_sensors, number_of_occlusions)
 
     for (w, wall) in enumerate(room.occlusions)
         # Check for intersection between the edge between two nodes and a given wall
@@ -58,7 +58,7 @@ function non_line_of_sight(network::AbstractNetwork, room::Room)
             if i != j
                 nodes = network.layout[[i,j],:]
                 try
-                    p, D[i,j,w] = non_line_of_sight(nodes, wall)
+                    p, NLOS[i,j,w] = non_line_of_sight(nodes, wall)
                 catch e
                     @show (i,j,w)
                     throw(e)
@@ -67,7 +67,7 @@ function non_line_of_sight(network::AbstractNetwork, room::Room)
         end        
     end
         
-    return D
+    return NLOS
 end
 
 function distance(p1::Point{T}, p2::Point{T}) where T <: Real
